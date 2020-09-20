@@ -73,15 +73,28 @@ Always remember to delete any unused deployed production nodes as soon as they a
 ### add the following to the yml directly below 'mapRoles: |'
 
 ```
-apiVersion: v1
-data:
-  mapRoles: |  <<<<<<<<<<<< ADD LINES RIGHT BELOW THIS <<<<<<<<<
-    - rolearn:  arn:aws:iam::<AWSCLI_ID>:role/UdacityFlaskDeployCBKubectlRole
-      username: build
-      groups:
-        - system:masters
-    - groups: <<<<<<<< This 'groups is from the original aws-auth-patch.yml output'
-... <<<<<<< Leave the rest of the file the same
+apiVersion: v1 
+data:   
+  mapRoles: |     
+    - groups:
+      - system:bootstrappers
+      - system:nodes
+      rolearn: arn:aws:iam::<YOUR_ACCOUNT_ID>:role/<EXISTENT_ROLE_INFORMATION>
+      username: system:node:{{EC2PrivateDNSName}}
+    - groups:
+      - system:masters
+      rolearn: arn:aws:iam::<YOUR_ACCOUNT_ID>:role/UdacityFlaskDeployCBKubectlRole
+      username: build   
+  mapUsers: |
+    []
+kind: ConfigMap 
+metadata:   
+  creationTimestamp: "<AUTO_GENERATED_VALUE>"
+  name: aws-auth
+  namespace: kube-system
+  resourceVersion: <AUTO_GENERATED_VALUE>
+  selfLink: /api/v1/namespaces/kube-system/configmaps/aws-auth
+  uid: <AUTO_GENERATED_VALUE>
 ```
 
 If successful, console will return: `configmap/aws-auth edited`
@@ -117,3 +130,5 @@ then, add the secret into your AWS Parameter Store:
 Once you are done with this project, you should delete the variable from the parameter store using the command:
 
 `aws ssm delete-parameter --name JWT_SECRET`
+
+

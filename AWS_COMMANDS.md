@@ -58,6 +58,10 @@ Always remember to delete any unused deployed production nodes as soon as they a
 
 `aws iam put-role-policy --role-name UdacityFlaskDeployCBKubectlRole --policy-name eks-describe --policy-document file://iam-role-policy.json`
 
+## Ensure that the current user has been given the arn-role:
+
+`aws --region us-east-2 eks update-kubeconfig --name simple-jwt-api --role-arn arn:aws:iam::aws_account_id:role/UdacityFlaskDeployCBKubectlRole`
+
 ## Grant the Role Access to the Cluster
 
 "aws-auth ConfigMap" is use dto grant role-based access control to your cluster. When your cluster is created only the creating user can administer it, you need to add the role you just created so that CodeBuild can also administer the cluster. 
